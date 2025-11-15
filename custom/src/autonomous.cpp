@@ -587,12 +587,13 @@ dir_change_end = true;
  moveToPoint(-33, 23, 1, 2000, false, 8);
 
 
- turnToAngle(-141, 1000, true, 6);
+ turnToAngle(-138, 1000, true, 6);
  storeIntake();
  //correct_angle = 180;
  heading_correction_kp = 0.8;
  correct_angle = normalizeTarget(-141);
- driveTo(25, 3000, false, 7);
+ moveToPoint(-40, 1, 1, 2000, false, 8);
+ driveTo(10.5, 3000,false, 6 );
  //resetAngle(-144);
  //matchloader.set(true);
  //boomerang(-37,0, 1, -110, 0.1, 2000, true, 8);
@@ -608,7 +609,7 @@ dir_change_end = true;
    //matchloader.set(true);
    return 0;
  });
- boomerang(-37, -48.8, 1, -178, 0.1, 2000, true, 6);
+ moveToPoint(-41.5, -49.2, 1, 2000, true, 6);
 // matchloader.set(true);
  correct_angle = 180;
  //driveTo(-0.5, 1200, false, 8);
@@ -630,7 +631,7 @@ dir_change_end = true;
  stopIntake();
  matchloader.set(true);
  correct_angle = normalizeTarget(-35);
- moveToPoint(-11, -66.5, 1, 2000, false, 9);
+ moveToPoint(-16.5, -66.5, 1, 2000, false, 9);
  middleGoal.set(false);
  matchloader.set(true);
  storeIntake();
@@ -648,7 +649,7 @@ dir_change_end = true;
    scoreLongGoal();
    return 0;
  });
- driveToHeading(-40, 89.6, 2000, false, 7);
+ driveToHeading(-40, 89.6, 2000, false, 8);
  driveChassis(-4, -4);
 }
 
@@ -780,26 +781,28 @@ void leftwing4(){
   heading_correction_kp = 0.67;
   matchloader.set(false);
   correct_angle = normalizeTarget(-160);
-  moveToPoint(-23, 0, 1, 2000, true, 9);
+  heading_correction_kp = 0.4;
+  moveToPoint(-18, 0, 1, 2000, true, 9);
+  heading_correction_kp = 1.1;
   turnToAngle(180,1000,true,6);
   driveToHeading(-27,180,1000,true,6);
   scoreLongGoal();
-  resetOdom(-23.5,12);
+  //resetOdom(-23.5,12);
   driveChassis(0,0);
-  vex::wait(1.85, sec);
+  vex::wait(0.8, sec);
   heading_correction_kp = 1.1;
   
 
 
   leftWing.set(true);
   //curveCircle(120, -14, 1000, false, 8);
-  driveTo(3.5,3000,true,4);
-  boomerang(-16.5, 52, 1, 180,0.1, 2000, true, 8);
+  driveTo(3.5,3000,false,4);
+  moveToPoint(-15, 2, 1,2000, true, 8);
   //turnToAngle(78, 3000, true, 7);
   leftWing.set(false);
   turnToAngle(180, 3000, true, 7);
   driveTo(-31, 3000, true,4);
-  //turnToAngle(-160, 900, true, 10);
+  turnToAngle(-160, 900, true, 10);
  
   stopChassis(brakeType::hold);
   }
@@ -831,7 +834,7 @@ void rightwing4() {
   matchloader.set(false);
   //moveToPoint(31, 10, 1, 2000, false, 12);
   heading_correction_kp = 0.8;
-  moveToPoint(39, 5, 1, 2000, false, 8);
+  moveToPoint(39.5, 5, 1, 2000, false, 8);
   turnToAngle(180,1000,true,6);
   driveToHeading(-27,180,1000,true,6);
   scoreLongGoal();
@@ -842,12 +845,14 @@ void rightwing4() {
   leftWing.set(true);
   //curveCircle(120, -14, 1000, false, 8);
   driveTo(3.5,3000,true,4);
-  boomerang(47.5, 7, 1, 180 ,0.1, 2000, true, 8);
+  boomerang(48.5, 7, 1, 180 ,0.1, 2000, true, 8);
   //turnToAngle(78, 3000, true, 7);
   leftWing.set(false);
   turnToAngle(180, 3000, true, 7);
   driveTo(-33, 3000, true,4);
   //turnToAngle(-160, 900, true, 10);
+  turnToAngle(-165, 900, true, 10);
+
  
   stopChassis(brakeType::hold);
 
