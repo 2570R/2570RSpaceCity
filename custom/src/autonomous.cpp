@@ -4,7 +4,7 @@
 #include <ctime>
 #include <cmath>
 #include <thread>
-
+#include "pose.h"
 #include "../include/autonomous.h"
 #include "motor-control.h"
 #include "../custom/include/intake.h"
@@ -13,7 +13,19 @@
 // Call these functions from custom/include/user.cpp
 // Format: returnType functionName() { code }
 //s
+//new change examples
+void resetOdometry(double x, double y){
+  x_pos = x;
+  y_pos = y;
+}
+
+void newChangeQOL(){
+  followPath(Point(-10.5, 24), Point(-10.5, 24), Point(-10.5, 24), Point(-10.5, 24), true, 2000);
+  resetOdometry(-10.5, 24);
+}
+
 void left9Long(){
+  
   min_output = 100;
   vex::task antiJamF([]{
     while(1){

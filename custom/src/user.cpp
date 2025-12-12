@@ -8,7 +8,6 @@ int auton_selected = 5;
 bool auto_started = false;
 
 void runAutonomous() {
-  
   auto_started = true;
   switch(auton_selected) {
     case 0:
@@ -32,7 +31,9 @@ void runAutonomous() {
     case 6:
       rifour();
       break;
-    
+    case 7:
+      //newChangeQOL();
+      break;
 
     
   }
@@ -170,7 +171,9 @@ void runPreAutonomous() {
       case 6:
         Brain.Screen.printAt(5, 60, "Right 4 Wing");
         break;
-      
+      case 7:
+        Brain.Screen.printAt(5, 60, "Test Auto");
+        break;
     }
     if(Brain.Screen.pressing()){
       while(Brain.Screen.pressing()) {}

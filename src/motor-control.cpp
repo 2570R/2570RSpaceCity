@@ -1608,7 +1608,7 @@ void boomerang(double x, double y, int dir, double a, double dlead, double time_
  * - p0, p1, p2, p3: Control points for the Bezier curve.
  * - timeout_ms: Maximum time allowed for the path (in milliseconds).
  */
-void followPath(Point p0, Point p1, Point p2, Point p3, int timeout_ms) {
+void followPath(Point p0, Point p1, Point p2, Point p3, bool exit, int timeout_ms) {
   stopChassis(vex::brakeType::coast); // Stop chassis before starting
   is_turning = true;                  // Set turning state
   
@@ -1741,9 +1741,13 @@ void followPath(Point p0, Point p1, Point p2, Point p3, int timeout_ms) {
     
     wait(10, msec);
   }
-  
+  if(exit){
+    prev_left_output = 0;
+    prev_right_output = 0;
+    driveChassis(0, 0);
+    stopChassis(vex::hold);
+  }
   Brain.Screen.clearScreen(red);
-  stopChassis(vex::hold); // Stop at end
   correct_angle = getInertialHeading(); // Update global heading
   is_turning = false;                   // Reset turning state
 }
