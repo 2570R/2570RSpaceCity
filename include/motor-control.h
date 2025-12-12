@@ -4,7 +4,7 @@
 // --- Global Variables (snake_case) ---
 extern bool is_turning;
 
-extern double xpos, ypos;
+extern double x_pos, y_pos;
 extern double correct_angle;
 
 // --- Function Declarations (lowerCamelCase) ---

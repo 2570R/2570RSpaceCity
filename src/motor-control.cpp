@@ -183,8 +183,6 @@ void turnToAngle(double turn_angle, double time_limit_msec, bool exit, double ma
   // Draw baseline for visualization
   double draw_amplifier = 230 / fabs(turn_angle);
   Brain.Screen.clearScreen(black);
-  Brain.Screen.setPenColor(green);
-  Brain.Screen.drawLine(0, fabs(turn_angle) * draw_amplifier, 600, fabs(turn_angle) * draw_amplifier);
   Brain.Screen.setPenColor(red);
 
   // PID loop for turning
@@ -237,6 +235,7 @@ void turnToAngle(double turn_angle, double time_limit_msec, bool exit, double ma
       wait(10, msec);
     }
   }
+  Brain.Screen.clearScreen(red);
   if(exit) {
     stopChassis(vex::hold);
   }
@@ -246,7 +245,7 @@ void turnToAngle(double turn_angle, double time_limit_msec, bool exit, double ma
 
 void driveToDist(double distance_mm, int dir, double time_limit_msec, bool exit, double max_output){
     // Store initial distance sensor value
-    double start_distance = frontDistanceSensor.value();
+    double start_distance = frontDistanceSensor.value() / 25.4;
     stopChassis(vex::brakeType::coast);
     is_turning = true;
     double threshold = 0.5;
@@ -279,10 +278,10 @@ void driveToDist(double distance_mm, int dir, double time_limit_msec, bool exit,
     PID pid_heading = PID(heading_correction_kp, heading_correction_ki, heading_correction_kd);
 
     // Configure PID controllers
-    pid_distance.setTarget(distance_mm);
+    pid_distance.setTarget(start_distance - distance_mm);
     pid_distance.setIntegralMax(3);  
     pid_distance.setSmallBigErrorTolerance(threshold, threshold * 3);
-    pid_distance.setSmallBigErrorDuration(50, 250);
+    pid_distance.setSmallBigErrorDuration(50, 50);
     pid_distance.setDerivativeTolerance(5);
 
     pid_heading.setTarget(normalizeTarget(correct_angle));
@@ -296,13 +295,13 @@ void driveToDist(double distance_mm, int dir, double time_limit_msec, bool exit,
     double start_time = Brain.timer(msec);
     double left_output = 0, right_output = 0, correction_output = 0;
     double current_distance = 0, current_angle = 0;
-
+    Brain.Screen.setPenColor(black);
     // Main PID loop for driving straight using distance sensor
     while (((!pid_distance.targetArrived()) && Brain.timer(msec) - start_time <= time_limit_msec && exit) || 
            (!exit && current_distance < distance_mm && Brain.timer(msec) - start_time <= time_limit_msec)) {
 
         // Calculate current distance and heading
-        current_distance = fabs(frontDistanceSensor.value() - start_distance);
+        current_distance = fabs(frontDistanceSensor.value()/25.4 - distance_mm);
         current_angle = getInertialHeading();
 
         left_output = pid_distance.update(current_distance) * drive_direction;
@@ -345,7 +344,7 @@ void driveToDist(double distance_mm, int dir, double time_limit_msec, bool exit,
         driveChassis(left_output, right_output);
         wait(10, msec);
     }
-
+    Brain.Screen.clearScreen(red);
     if(exit) {
         prev_left_output = 0;
         prev_right_output = 0;
@@ -396,7 +395,7 @@ void driveTo(double distance_in, double time_limit_msec, bool exit, double max_o
   pid_distance.setTarget(distance_in);
   pid_distance.setIntegralMax(3);  
   pid_distance.setSmallBigErrorTolerance(threshold, threshold * 3);
-  pid_distance.setSmallBigErrorDuration(50, 250);
+  pid_distance.setSmallBigErrorDuration(50, 50);
   pid_distance.setDerivativeTolerance(5);
 
   pid_heading.setTarget(normalizeTarget(correct_angle));
@@ -410,7 +409,7 @@ void driveTo(double distance_in, double time_limit_msec, bool exit, double max_o
   double start_time = Brain.timer(msec);
   double left_output = 0, right_output = 0, correction_output = 0;
   double current_distance = 0, current_angle = 0;
-
+  Brain.Screen.setPenColor(black);
   // Main PID loop for driving straight
   while (((!pid_distance.targetArrived()) && Brain.timer(msec) - start_time <= time_limit_msec && exit) || (exit == false && current_distance < distance_in && Brain.timer(msec) - start_time <= time_limit_msec)) {
     // Calculate current distance and heading
@@ -453,6 +452,7 @@ void driveTo(double distance_in, double time_limit_msec, bool exit, double max_o
     driveChassis(left_output, right_output);
     wait(10, msec);
   }
+  Brain.Screen.clearScreen(red);
   if(exit) {
     prev_left_output = 0;
     prev_right_output = 0;
@@ -497,7 +497,7 @@ void driveToHeading(double distance_in, double targetHeading, double time_limit_
   pid_distance.setTarget(distance_in);
   pid_distance.setIntegralMax(3);  
   pid_distance.setSmallBigErrorTolerance(threshold, threshold * 3);
-  pid_distance.setSmallBigErrorDuration(50, 250);
+  pid_distance.setSmallBigErrorDuration(50, 50);
   pid_distance.setDerivativeTolerance(5);
 
   pid_heading.setTarget(normalizeTarget(targetHeading));
@@ -511,7 +511,7 @@ void driveToHeading(double distance_in, double targetHeading, double time_limit_
   double start_time = Brain.timer(msec);
   double left_output = 0, right_output = 0, correction_output = 0;
   double current_distance = 0, current_angle = 0;
-
+  Brain.Screen.setPenColor(black);
   // Main PID loop for driving straight
   while (((!pid_distance.targetArrived()) && Brain.timer(msec) - start_time <= time_limit_msec && exit) || (exit == false && current_distance < distance_in && Brain.timer(msec) - start_time <= time_limit_msec)) {
     // Calculate current distance and heading
@@ -554,6 +554,7 @@ void driveToHeading(double distance_in, double targetHeading, double time_limit_
     driveChassis(left_output, right_output);
     wait(10, msec);
   }
+  Brain.Screen.clearScreen(red);
   if(exit) {
     prev_left_output = 0;
     prev_right_output = 0;
@@ -629,7 +630,7 @@ void curveCircle(double result_angle_deg, double center_radius, double time_limi
   pid_out.setIntegralMax(0);  
   pid_out.setIntegralRange(5);
   pid_out.setSmallBigErrorTolerance(0.3, 0.9);
-  pid_out.setSmallBigErrorDuration(50, 250);
+  pid_out.setSmallBigErrorDuration(50, 50);
   pid_out.setDerivativeTolerance(threshold * 4.5);
 
   pid_turn.setTarget(0);
@@ -643,7 +644,7 @@ void curveCircle(double result_angle_deg, double center_radius, double time_limi
   double start_time = Brain.timer(msec);
   double left_output = 0, right_output = 0, correction_output = 0;
   double current_right = 0, current_left = 0;
-
+  Brain.Screen.setPenColor(black);
   // Main control loop for each curve/exit configuration
   if (curve_direction == -1 && exit == true) {
     // Left curve, stop at end
@@ -742,6 +743,7 @@ void curveCircle(double result_angle_deg, double center_radius, double time_limi
       wait(10, msec);
     }
   }
+  Brain.Screen.clearScreen(red);
   // Stop the chassis if required
   if(exit == true) {
     stopChassis(vex::brakeType::hold);
@@ -770,9 +772,9 @@ void swing(double swing_angle, double drive_direction, double time_limit_msec, b
   pid.setTarget(swing_angle);                 // Set PID target
   pid.setIntegralMax(0);  
   pid.setIntegralRange(5);
-
+  Brain.Screen.setPenColor(black);
   pid.setSmallBigErrorTolerance(threshold, threshold * 3);
-  pid.setSmallBigErrorDuration(50, 250);
+  pid.setSmallBigErrorDuration(50, 50);
   pid.setDerivativeTolerance(threshold * 4.5);
 
   // Draw the baseline for visualization
@@ -891,7 +893,6 @@ void swing(double swing_angle, double drive_direction, double time_limit_msec, b
       wait(10, msec);
     }
   }
-
   // PID loop for exit == true (stop at end)
   while (!pid.targetArrived() && Brain.timer(msec) - start_time <= time_limit_msec && exit == true) {
     current_heading = getInertialHeading();
@@ -929,6 +930,7 @@ void swing(double swing_angle, double drive_direction, double time_limit_msec, b
     }
     wait(10, msec);
   }
+  Brain.Screen.clearScreen(red);
   if(exit == true) {
     stopChassis(vex::hold); // Stop chassis at end if required
   }
@@ -1225,7 +1227,7 @@ void turnToPoint(double x, double y, int direction, double time_limit_msec) {
 void moveToPoint(double x, double y, int dir, double time_limit_msec, bool exit, double max_output, bool overturn) {
   stopChassis(vex::brakeType::coast); // Stop chassis before moving
   is_turning = true;                  // Set turning state
-  double threshold = 0.5;
+  double threshold = 0.8;
   int add = dir > 0 ? 0 : 180;
   double max_slew_fwd = dir > 0 ? max_slew_accel_fwd : max_slew_decel_rev;
   double max_slew_rev = dir > 0 ? max_slew_decel_fwd : max_slew_accel_rev;
@@ -1256,7 +1258,7 @@ void moveToPoint(double x, double y, int dir, double time_limit_msec, bool exit,
   pid_distance.setIntegralMax(0);  
   pid_distance.setIntegralRange(3);
   pid_distance.setSmallBigErrorTolerance(threshold, threshold * 3);
-  pid_distance.setSmallBigErrorDuration(50, 50);
+  pid_distance.setSmallBigErrorDuration(5, 10);
   pid_distance.setDerivativeTolerance(5);
   
   pid_heading.setTarget(normalizeTarget(radToDeg(atan2(x - x_pos, y - y_pos)) + add));
@@ -1267,13 +1269,13 @@ void moveToPoint(double x, double y, int dir, double time_limit_msec, bool exit,
   pid_heading.setSmallBigErrorDuration(0, 0);
   pid_heading.setDerivativeTolerance(0);
   pid_heading.setArrive(false);
-
+  Brain.Screen.clearScreen(black);
   // Reset the chassis
   double start_time = Brain.timer(msec);
   double left_output = 0, right_output = 0, correction_output = 0, prev_left_output = 0, prev_right_output = 0;
   double exittolerance = 1;
   bool perpendicular_line = false, prev_perpendicular_line = true;
-
+  Brain.Screen.setPenColor(black);
   double current_angle = 0, overturn_value = 0;
   bool ch = true;
 
@@ -1341,6 +1343,7 @@ void moveToPoint(double x, double y, int dir, double time_limit_msec, bool exit,
     driveChassis(left_output, right_output); // Apply output to chassis
     wait(10, msec);
   }
+  Brain.Screen.clearScreen(red);
   if(exit == true) {
     prev_left_output = 0;
     prev_right_output = 0;
@@ -1377,6 +1380,8 @@ void moveToPointChain(double x, double y, int dir, double exit_dist, double time
   pid_heading.setSmallBigErrorDuration(0, 0);
   pid_heading.setDerivativeTolerance(0);
   pid_heading.setArrive(false);
+
+  Brain.Screen.clearScreen(black);
 
   // Reset the chassis
   double start_time = Brain.timer(msec);
@@ -1440,6 +1445,7 @@ void moveToPointChain(double x, double y, int dir, double exit_dist, double time
     driveChassis(left_output, right_output); // Apply output to chassis
     wait(10, msec);
   }
+  Brain.Screen.clearScreen(red);
   stopChassis(vex::coast);
   correct_angle = getInertialHeading(); // Update global heading
   is_turning = false;                   // Reset turning state
