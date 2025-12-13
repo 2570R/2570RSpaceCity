@@ -169,7 +169,7 @@ void turnToAngle(double turn_angle, double time_limit_msec, bool exit, double ma
   stopChassis(vex::brakeType::coast);
   is_turning = true;
   double threshold = 1;
-  PID pid = PID(turn_kp, turn_ki, turn_kd);
+  PID pid = turnPID;
 
   // Normalize and set PID target
   turn_angle = normalizeTarget(turn_angle);
@@ -243,6 +243,7 @@ void turnToAngle(double turn_angle, double time_limit_msec, bool exit, double ma
   is_turning = false;
 }
 
+
 void driveToDist(double distance_mm, int dir, double time_limit_msec, bool exit, double max_output){
     // Store initial distance sensor value
     double start_distance = frontDistanceSensor.value() / 25.4;
@@ -274,8 +275,8 @@ void driveToDist(double distance_mm, int dir, double time_limit_msec, bool exit,
     }
 
     distance_mm = fabs(distance_mm); // Ensure distance is positive for PID
-    PID pid_distance = PID(distance_kp, distance_ki, distance_kd);
-    PID pid_heading = PID(heading_correction_kp, heading_correction_ki, heading_correction_kd);
+    PID pid_distance = lateralPID;
+    PID pid_heading = correctPID;
 
     // Configure PID controllers
     pid_distance.setTarget(start_distance - distance_mm);
@@ -388,8 +389,8 @@ void driveTo(double distance_in, double time_limit_msec, bool exit, double max_o
   }
 
   distance_in = distance_in * drive_direction;
-  PID pid_distance = PID(distance_kp, distance_ki, distance_kd);
-  PID pid_heading = PID(heading_correction_kp, heading_correction_ki, heading_correction_kd);
+  PID pid_distance = lateralPID;
+  PID pid_heading = correctPID;
 
   // Configure PID controllers
   pid_distance.setTarget(distance_in);
@@ -490,8 +491,8 @@ void driveToHeading(double distance_in, double targetHeading, double time_limit_
   }
 
   distance_in = distance_in * drive_direction;
-  PID pid_distance = PID(distance_kp, distance_ki, distance_kd);
-  PID pid_heading = PID(heading_correction_kp, heading_correction_ki, heading_correction_kd);
+  PID pid_distance = lateralPID;
+  PID pid_heading = correctPID;
 
   // Configure PID controllers
   pid_distance.setTarget(distance_in);
@@ -623,8 +624,8 @@ void curveCircle(double result_angle_deg, double center_radius, double time_limi
   }
 
   // Initialize PID controllers for arc distance and heading correction
-  PID pid_out = PID(distance_kp, distance_ki, distance_kd);
-  PID pid_turn = PID(heading_correction_kp, heading_correction_ki, heading_correction_kd);
+  PID pid_out = lateralPID;
+  PID pid_turn = turnPID;
 
   pid_out.setTarget(out_arc);
   pid_out.setIntegralMax(0);  
@@ -766,7 +767,7 @@ void swing(double swing_angle, double drive_direction, double time_limit_msec, b
   stopChassis(vex::brakeType::coast); // Stop chassis before starting swing
   is_turning = true;                  // Set turning state
   double threshold = 1;
-  PID pid = PID(turn_kp, turn_ki, turn_kd); // Initialize PID for turning
+  PID pid = turnPID; // Initialize PID for turning
 
   swing_angle = normalizeTarget(swing_angle); // Normalize target angle
   pid.setTarget(swing_angle);                 // Set PID target
@@ -945,7 +946,7 @@ void swing(double swing_angle, double drive_direction, double time_limit_msec, b
  */
 void correctHeading() {
   double output = 0;
-  PID pid = PID(heading_correction_kp, heading_correction_ki, heading_correction_kd);
+  PID pid = correctPID;
 
   pid.setTarget(correct_angle); // Set PID target to current heading
   pid.setIntegralRange(fabs(correct_angle) / 2.5);
@@ -1169,7 +1170,7 @@ void turnToPoint(double x, double y, int direction, double time_limit_msec) {
   }
   // Calculate target angle using atan2 and normalize
   double turn_angle = normalizeTarget(radToDeg(atan2(x - x_pos, y - y_pos))) + add;
-  PID pid = PID(turn_kp, turn_ki, turn_kd);
+  PID pid = turnPID;
 
   pid.setTarget(turn_angle); // Set PID target
   pid.setIntegralMax(0);  
@@ -1250,8 +1251,8 @@ void moveToPoint(double x, double y, int dir, double time_limit_msec, bool exit,
     }
   }
 
-  PID pid_distance = PID(distance_kp, distance_ki, distance_kd);
-  PID pid_heading = PID(heading_correction_kp, heading_correction_ki, heading_correction_kd);
+  PID pid_distance = lateralPID;
+  PID pid_heading = correctPID;
 
   // Set PID targets for distance and heading
   pid_distance.setTarget(hypot(x - x_pos, y - y_pos));
@@ -1361,8 +1362,8 @@ void moveToPointChain(double x, double y, int dir, double exit_dist, double time
   double max_slew_rev = dir > 0 ? max_slew_decel_fwd : max_slew_accel_rev;
   bool min_speed = true;
 
-  PID pid_distance = PID(distance_kp, distance_ki, distance_kd);
-  PID pid_heading = PID(heading_correction_kp, heading_correction_ki, heading_correction_kd);
+  PID pid_distance = lateralPID;
+  PID pid_heading = correctPID;
 
   // Set PID targets for distance and heading
   pid_distance.setTarget(hypot(x - x_pos, y - y_pos));
@@ -1489,8 +1490,8 @@ void boomerang(double x, double y, int dir, double a, double dlead, double time_
     }
   }
 
-  PID pid_distance = PID(distance_kp, distance_ki, distance_kd);
-  PID pid_heading = PID(heading_correction_kp, heading_correction_ki, heading_correction_kd);
+  PID pid_distance = lateralPID;
+  PID pid_heading = correctPID;
 
   pid_distance.setTarget(0); // Target is dynamically updated
   pid_distance.setIntegralMax(3);  

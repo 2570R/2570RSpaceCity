@@ -93,3 +93,20 @@ double project(Point point, Pose line) {
     double b = std::sin(line.theta);
     return (x * a + y * b) / (a * a + b * b);
 }
+
+std::pair<float, float> scaleToRatio(float factor, float num1, float num2) {
+
+    float ratio = factor / fmax(fabs(num1), fabs(num2));
+    return std::make_pair(num1 * ratio, num2 * ratio);
+}
+
+double clamp(double _val, double _min, double _max){
+    if(_val > _max){
+        _val = _max;
+    } else if(_val < _min){
+        _val = _min;
+    } else{
+        _val = _val;
+    }
+    return _val;
+}

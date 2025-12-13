@@ -5,8 +5,9 @@
 #include <cmath>
 
 // Constructor
-PID::PID(double new_kp, double new_ki, double new_kd)
-  : arrived(false), 
+PID::PID(AsymptoticGains& new_kp, double new_ki, double new_kd)
+  : kp(new_kp),
+    arrived(false), 
     arrive(true), 
     small_error_tolerance(1), 
     big_error_tolerance(3), 
@@ -18,7 +19,6 @@ PID::PID(double new_kp, double new_ki, double new_kd)
     integral_range(0), 
     integral_max(500) {
   // Set up the Coefficient.
-  kp = new_kp;
   ki = new_ki;
   kd = new_kd;
   // Not arrived initially.
@@ -26,7 +26,8 @@ PID::PID(double new_kp, double new_ki, double new_kd)
 }
 
 void PID::setCoefficient(double new_kp, double new_ki, double new_kd) {
-  kp = new_kp;
+  // Note: kp is a reference to AsymptoticGains and cannot be reassigned
+  // Use kp.setGain(new_kp) if you need to update the setpoint
   ki = new_ki;
   kd = new_kd;
 }
@@ -101,7 +102,7 @@ double PID::update(double input) {
   }
 
   // Calculate proportional
-  proportional = kp * current_error;
+  proportional = kp.getGain() * current_error;
   
   // Calculate derivative
   derivative = kd * (current_error - previous_error); 

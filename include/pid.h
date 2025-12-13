@@ -1,9 +1,11 @@
 #ifndef __PID__
 #define __PID__
 
+#include "../include/asymptoticGains.h"
+
 class PID {
  public:
-  PID(double new_kp, double new_ki, double new_kd);
+  PID(AsymptoticGains& new_kp, double new_ki, double new_kd);
   
   // Adjust the kp, ki and kd if needed.
   void setCoefficient(double new_kp, double new_ki, double new_kd);
@@ -48,7 +50,7 @@ class PID {
  protected:
   // Desired target value. 
   double target;
-
+  
   // Exit condition arrived.
   bool arrived, arrive;
 
@@ -68,7 +70,8 @@ class PID {
   bool first_time;
 
   // PID Coefficient. 
-  double kp, ki, kd;
+  AsymptoticGains& kp;
+  double ki, kd;
 
   // Do not consider integral if the proportional value
   // is out of this range. 

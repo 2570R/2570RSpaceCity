@@ -3,9 +3,31 @@
 #include "../custom/include/autonomous.h"
 #include "../custom/include/intake.h"
 #include "../custom/include/logger.h"
+#include "../../include/driveSettings.h"
+
+vex::motor_group left_motors(left_chassis1, left_chassis2, left_chassis3);
+vex::motor_group right_motors(right_chassis1, right_chassis2, right_chassis3);
+ChassisGeometry chassisGeometry(&left_motors, &right_motors, 1);
+ChassisDriverSettings chassisDriverSettings(&controller_1, 1, 0, 800, true);
+TwoStickArcade chassis(chassisGeometry, chassisDriverSettings);
+
 // Modify autonomous, driver, or pre-auton code below
 int auton_selected = 5;
 bool auto_started = false;
+vex::thread* odom = nullptr;
+
+void taskHandler(bool driver){
+  if(!driver && odom == nullptr){
+    odom = new vex::thread(trackNoOdomWheel);
+  } 
+  else if (driver && odom != nullptr) {
+    odom->interrupt();
+    delete odom;
+    odom = nullptr;
+  }
+  
+}
+
 
 void runAutonomous() {
   auto_started = true;
@@ -53,9 +75,11 @@ void runDriver() {
   bool downPressed;
   bool bPressed;
   bool upPressed;
+  taskHandler(false);
   
   matchloader.set(false);
   while (true) {
+    uint64_t timestamp = vex::timer::systemHighResolution();
     Brain.Screen.clearScreen(black);
     antiJamTask();
     // [-100, 100] for controller stick axis values
@@ -79,7 +103,8 @@ void runDriver() {
     button_right_arrow = controller_1.ButtonRight.pressing();
     
     // default tank drive or replace it with your preferred driver code here: 
-    driveChassis(ch3 * 0.12 + ch1 * 0.123, ch3 * 0.12 - ch1 * 0.123);
+    //driveChassis(ch3 * 0.12 + ch1 * 0.123, ch3 * 0.12 - ch1 * 0.123);
+    chassis.controllerFeedbackSpin(false);
     
     if(r1){
       storeIntake();
@@ -116,10 +141,9 @@ void runDriver() {
     Brain.Screen.printAt(5, 120, "battery: %.2f", vexBatteryCapacityGet);
     
 
-    wait(10, msec); 
+    wait((timestamp + 11000.0 - vex::timer::systemHighResolution()) / 1000.0, vex::msec);
   }
 }
-
 
 
 void runPreAutonomous() {
@@ -137,15 +161,7 @@ void runPreAutonomous() {
   
   // odom tracking
   resetChassis();
-  if(using_horizontal_tracker && using_vertical_tracker) {
-    thread odom = thread(trackXYOdomWheel);
-  } else if (using_horizontal_tracker) {
-    thread odom = thread(trackXOdomWheel);
-  } else if (using_vertical_tracker) {
-    thread odom = thread(trackYOdomWheel);
-  } else {
-    thread odom = thread(trackNoOdomWheel);
-  }
+  taskHandler(false);
   
   while(!auto_started){
     Brain.Screen.clearScreen();

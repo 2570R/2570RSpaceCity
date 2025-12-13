@@ -1,5 +1,7 @@
 using namespace vex;
 
+#include "../../include/asymptoticGains.h"
+#include "../../include/pid.h"
 // Format: extern device deviceName;
 
 extern brain Brain;
@@ -23,7 +25,9 @@ extern digital_out leftWing;
 extern digital_out middleGoal;
 extern digital_out matchloader;
 extern optical ballSensTop;
-
+extern PID lateralPID;
+extern PID turnPID;
+extern PID correctPID;
 
 // USER-CONFIGURABLE PARAMETERS (CHANGE BEFORE USING THIS TEMPLATE)
 extern double distance_between_wheels;

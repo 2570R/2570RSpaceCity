@@ -11,8 +11,8 @@
 #include "../include/maths.h"
 
 double PHI_FRONT = 0.0;
-double PHI_RIGHT = -90.0;
-double PHI_LEFT  = 90.0;
+double PHI_RIGHT = 90.0;
+double PHI_LEFT  = -90.0;
 // IMPORTANT: Remember to add respective function declarations to custom/include/autonomous.h
 // Call these functions from custom/include/user.cpp
 // Format: returnType functionName() { code }
@@ -73,27 +73,10 @@ void relocalize(std::string walls) {
       if (useNorth) {
           // sensor direction . global +Y
           sensorDist = dFront; phi = PHI_FRONT;
-          bestDist = sensorDist * sin(degToRad(headingDeg + phi));
-
-          if (bestDist < 0) bestDist = INFINITY; // Wrong direction
-          // Check left
-          double projL = dLeft * sin(degToRad(headingDeg + PHI_LEFT));
-          if (projL > 0 && projL < bestDist) {sensorDist = dLeft; phi = PHI_LEFT; bestDist = projL;}
-          // Check right
-          double projR = dRight * sin(degToRad(headingDeg + PHI_RIGHT));
-          if (projR > 0 && projR < bestDist) {sensorDist = dRight; phi = PHI_RIGHT; bestDist = projR;}
       }
       else { // South (negative Y)
           sensorDist = dFront; phi = PHI_FRONT;
-          bestDist = -sensorDist * sin(degToRad(headingDeg + phi));
-
-          if (bestDist < 0) bestDist = INFINITY;
-
-          double projL = -dLeft * sin(degToRad(headingDeg + PHI_LEFT));
-          if (projL > 0 && projL < bestDist) { sensorDist = dLeft; phi = PHI_LEFT; bestDist = projL; }
-
-          double projR = -dRight * sin(degToRad(headingDeg + PHI_RIGHT));
-          if (projR > 0 && projR < bestDist) { sensorDist = dRight; phi = PHI_RIGHT; bestDist = projR; }
+          
       }
 
       double projY = computeProjection(sensorDist, headingDeg, phi, false);

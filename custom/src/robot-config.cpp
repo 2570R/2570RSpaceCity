@@ -1,4 +1,5 @@
 #include "vex.h"
+#include "../../custom/include/robot-config.h"
 
 using namespace vex;
 using signature = vision::signature;
@@ -64,6 +65,14 @@ double wheel_distance_in = (36.0 / 48.0) * 3.17 * M_PI;
 double distance_kp = 1.1, distance_ki = 0.1, distance_kd = 7;
 double turn_kp = 0.4, turn_ki = 0, turn_kd = 2.9;
 double heading_correction_kp = 1.1, heading_correction_ki = 0, heading_correction_kd = 4;
+
+AsymptoticGains lateralKp = AsymptoticGains(15000, 15000, 1, 1);
+AsymptoticGains angularKp = AsymptoticGains(480, 220, 28, 1.7);
+AsymptoticGains correctKp = AsymptoticGains(200, 200, 1, 1);
+
+PID lateralPID = PID(lateralKp, distance_ki, distance_kd);
+PID turnPID = PID(angularKp, turn_ki, turn_kd);
+PID correctPID = PID(correctKp, heading_correction_ki, heading_correction_kd);
 
 // Enable or disable the use of tracking wheels
 bool using_horizontal_tracker = false;  // Set to true if a horizontal tracking wheel is installed and used for odometry

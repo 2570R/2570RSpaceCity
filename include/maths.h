@@ -79,3 +79,7 @@ float getCurvature(Pose pose, Pose other);
 float curve(float input, float deadband, float curveGain, float minOutput = 0);
 
 double project(Point point, Pose line);
+
+std::pair<float, float> scaleToRatio(float factor, float num1, float num2);
+
+double clamp(double _val, double _min, double _max);
