@@ -1,21 +1,21 @@
 #pragma once
 
-class Pose {
+class LegacyPose {
     public:
         float x;
         float y;
         float theta;
-        Pose();
-        Pose(float x, float y, float theta = 0);
-        Pose operator+(const Pose& other) const;
-        Pose operator-(const Pose& other) const;
-        float operator*(const Pose& other) const;
-        Pose operator*(const float& other) const;
-        Pose operator/(const float& other) const;
-        Pose lerp(Pose other, float t) const;
-        float distance(Pose other) const;
-        float angle(Pose other) const;
-        Pose rotate(float angle) const;
+        LegacyPose();
+        LegacyPose(float x, float y, float theta = 0);
+        LegacyPose operator+(const LegacyPose& other) const;
+        LegacyPose operator-(const LegacyPose& other) const;
+        float operator*(const LegacyPose& other) const;
+        LegacyPose operator*(const float& other) const;
+        LegacyPose operator/(const float& other) const;
+        LegacyPose lerp(LegacyPose other, float t) const;
+        float distance(LegacyPose other) const;
+        float angle(LegacyPose other) const;
+        LegacyPose rotate(float angle) const;
 };
 
 class Point {

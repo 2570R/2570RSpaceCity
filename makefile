@@ -13,6 +13,10 @@ SRC_C += $(wildcard src/*/*.cpp)
 SRC_C += $(wildcard src/*/*.c)
 SRC_C += $(wildcard custom/src/*.cpp)
 SRC_C += $(wildcard custom/src/*.c)
+SRC_C += $(wildcard genFunctions/src/*.cpp)
+SRC_C += $(wildcard genFunctions/src/*.c)
+SRC_C += $(wildcard genFunctions/src/*/*.cpp)
+SRC_C += $(wildcard genFunctions/src/*/*.c)
 
 OBJ = $(addprefix $(BUILD)/, $(addsuffix .o, $(basename $(SRC_C))) )
 
@@ -24,6 +28,7 @@ SRC_A  = makefile
 
 # project header file locations
 INC_F  = include
+INC_F += genFunctions/include
 
 # build targets
 all: $(BUILD)/$(PROJECT).bin

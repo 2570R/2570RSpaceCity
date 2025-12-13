@@ -9,6 +9,39 @@
 #include "motor-control.h"
 #include "../custom/include/intake.h"
 #include "../include/maths.h"
+#include "../../genFunctions/include/main.h"
+#include "../../genFunctions/include/motionControl/PID.h"
+#include "../../genFunctions/include/motionControl/Odometry.h"
+#include "../../genFunctions/include/motionControl/Odom.h"
+#include "../../genFunctions/include/motionControl/Motion.h"
+#include "../../genFunctions/include/utility/Path.h"
+#include "../../genFunctions/include/PathStorage/testPath.h"
+#include "../../genFunctions/include/components/Inertial.h"
+
+Odometry odometry(-0.09, 0.5, 1.1);
+vex::rotation parallel(21);
+vex::rotation sideways(21);
+TrackingWheel parallelWheel(parallel, 2);
+TrackingWheel perpendicularWheel(sideways, 2);
+Inertial imu(inertial_sensor, 1.00035);
+OdometrySensors odomSensors(&parallelWheel, &perpendicularWheel, &imu);
+OdometryOffsets odomOffsets(0, 0);
+TwoWheelInertialOdometry odome(odomSensors, odomOffsets, foot);
+
+AsymptoticGains lateralKp1 = AsymptoticGains(15000, 15000, 1, 1);
+AsymptoticGains angularKp1 = AsymptoticGains(480, 220, 28, 1.7);
+AsymptoticGains correctKp1 = AsymptoticGains(200, 200, 1, 1);
+
+MotionPID langPID = MotionPID(lateralKp1, 25000, 150, 0.5, true);
+MotionPID angPID = MotionPID(angularKp1, 2000, 12, 5, true);
+MotionPID headingPID = MotionPID(correctKp1, 0, 40, 0, false);
+
+Motion motion(
+  langPID,
+  angPID,
+  headingPID,
+  odometry);
+
 
 double PHI_FRONT = 0.0;
 double PHI_RIGHT = 90.0;
@@ -47,7 +80,7 @@ double computeProjection(double d, double thetaDeg, double phiDeg, bool projectX
 }
 
 void relocalize(std::string walls) {
-  Pose p = {NAN, NAN, NAN};
+  LegacyPose p = {NAN, NAN, NAN};
   double headingDeg = normalizeTarget(getInertialHeading());
 
   bool useNorth = walls.find('N') != std::string::npos;
@@ -124,6 +157,8 @@ void relocalize(std::string walls) {
 void newChangeQOL(){
   followPath(Point(-10.5, 24), Point(-10.5, 24), Point(-10.5, 24), Point(-10.5, 24), true, 2000);
   relocalize("NW");
+  motion.movePose(10, 15, 90, 0.7, 0, 60, 100, 2000, -1, false);
+  motion.turnHeading(60, 0, 1, 1, 600);
 }
 
 void left9Long(){

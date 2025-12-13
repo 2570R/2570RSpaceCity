@@ -58,7 +58,7 @@ float slew(float target, float current, float maxChange) {
     return current + change;
 }
 
-float getCurvature(Pose pose, Pose other) {
+float getCurvature(LegacyPose pose, LegacyPose other) {
     // calculate whether the pose is on the left or right side of the circle
     float side = sgn(std::sin(pose.theta) * (other.x - pose.x) - std::cos(pose.theta) * (other.y - pose.y));
     // calculate center point and radius
@@ -86,7 +86,7 @@ float curve(float input, float deadband, float curveGain, float minOutput) {
     }
 }
 
-double project(Point point, Pose line) {
+double project(Point point, LegacyPose line) {
     double x = point.x - line.x;
     double y = point.y - line.y;
     double a = std::cos(line.theta);

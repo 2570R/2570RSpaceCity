@@ -49,7 +49,7 @@ float deg2rad(float deg);
 // alpha is weight of new value
 float ema(float newValue, float oldValue, float alpha);
 
-Pose smoothPose(const Pose& newPose, const Pose& oldPose, float alpha);
+LegacyPose smoothPose(const LegacyPose& newPose, const LegacyPose& oldPose, float alpha);
 
 // uses drivetrain wheel diameter by default
 float rot2inch(float rotations, float diameter = DT_WHEEL_DIAMETER);
@@ -74,11 +74,11 @@ float angleLerp(float a, float b, float t);
 
 float slew(float target, float current, float maxChange);
 
-float getCurvature(Pose pose, Pose other);
+float getCurvature(LegacyPose pose, LegacyPose other);
 
 float curve(float input, float deadband, float curveGain, float minOutput = 0);
 
-double project(Point point, Pose line);
+double project(Point point, LegacyPose line);
 
 std::pair<float, float> scaleToRatio(float factor, float num1, float num2);
 

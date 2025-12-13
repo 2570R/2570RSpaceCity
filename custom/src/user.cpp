@@ -5,9 +5,8 @@
 #include "../custom/include/logger.h"
 #include "../../include/driveSettings.h"
 
-vex::motor_group left_motors(left_chassis1, left_chassis2, left_chassis3);
-vex::motor_group right_motors(right_chassis1, right_chassis2, right_chassis3);
-ChassisGeometry chassisGeometry(&left_motors, &right_motors, 1);
+
+ChassisGeometry chassisGeometry(&left_chassis, &right_chassis, 1);
 ChassisDriverSettings chassisDriverSettings(&controller_1, 1, 0, 800, true);
 TwoStickArcade chassis(chassisGeometry, chassisDriverSettings);
 
