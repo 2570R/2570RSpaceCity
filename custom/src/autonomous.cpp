@@ -1109,3 +1109,35 @@ void rifour(){
  
   stopChassis(brakeType::hold);
 }
+
+void right4mlow(int isRed){
+  vex::task antiJamF([]{
+    while(1){
+      antiJamTask();
+      vex::wait(20, msec);
+    }
+    return 0;
+  });
+  storeIntake();
+  matchloader.set(true);
+  moveToPoint(-1, 22, 1, 1500, false, 12, false);
+  moveToPoint(12, 33, 1, 1500, false, 10, false);
+  turnToAngle(90, 300, true, 10);
+  driveChassis(8, 8);
+  vex::wait(800, msec);
+  resetOdometry(-72 + frontDistanceSensor.value()/25.4, -72 + leftDistanceSensor.value()/25.4);
+  resetAngle(getInertialHeading(false) + 180);
+  logger.info("dist reset end pos x: %.2f, y: %.2f, theta: %.2f", x_pos, y_pos, normalizeTarget(getInertialHeading()));
+  vex::wait(10, msec);
+  moveToPoint(-42.5, -64, -1, 2000, false, 10, false);
+  driveToHeading(-8, -90, 800, true, 8);
+  matchloader.set(false);
+  colorSortLong(isRed, 1200);
+  resetOdometry(-72 + frontDistanceSensor.value()/25.4, 72 - rightDistanceSensor.value()/25.4);
+  logger.info("end x: %.2f, y: %.2f, theta: %.2f", x_pos, y_pos, normalizeTarget(getInertialHeading()));
+  turnToAngle(178.6, 2000, true, 12);
+  storeIntake();
+  resetOdometry(72 - leftDistanceSensor.value()/25.4, y_pos);
+  logger.info("end x: %.2f, y: %.2f, theta: %.2f", x_pos, y_pos, normalizeTarget(getInertialHeading()));
+  
+}

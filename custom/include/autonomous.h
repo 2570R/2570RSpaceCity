@@ -17,3 +17,4 @@ void awp2();
 void test();
 void left4();
 void rifour();
+void right4mlow(int isRed);

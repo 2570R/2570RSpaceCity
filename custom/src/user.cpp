@@ -11,7 +11,7 @@ ChassisDriverSettings chassisDriverSettings(&controller_1, 1, 0, 10, false);
 TwoStickArcade chassis(chassisGeometry, chassisDriverSettings);
 
 // Modify autonomous, driver, or pre-auton code below
-int auton_selected = 1;
+int auton_selected = 10;
 int color_selected = 1;
 bool auto_started = false;
 vex::thread* odom = nullptr;
@@ -72,6 +72,9 @@ void runAutonomous() {
       break;
     case 9:
       matchloaderLeftLongAndMid(color_selected);
+      break;
+    case 10:
+      right4mlow(color_selected);
       break;
   }
   
@@ -191,6 +194,7 @@ void runPreAutonomous() {
         case 7: Brain.Screen.printAt(5, 90, "Matchloader Left 4 Wing"); break;
         case 8: Brain.Screen.printAt(5, 90, "Matchloader Right 4 Wing"); break;
         case 9: Brain.Screen.printAt(5, 90, "Matchloader Left Long + Mid"); break;
+        case 10: Brain.Screen.printAt(5, 90, "Matchloader right Long + low"); break;
       }
 
       if (Brain.Screen.pressing()) {
@@ -200,7 +204,7 @@ void runPreAutonomous() {
         if (Brain.timer(msec) - pressTime > 500) {
           preAutonState = SELECT_COLOR; // long press = confirm
         } else {
-          auton_selected = (auton_selected + 1) % 10; // short tap = cycle
+          auton_selected = (auton_selected + 1) % 11; // short tap = cycle
         }
       }
     }
@@ -244,6 +248,7 @@ void runPreAutonomous() {
         case 7: Brain.Screen.printAt(20, 90, "Matchloader Left 4 Wing"); break;
         case 8: Brain.Screen.printAt(20, 90, "Matchloader Right 4 Wing"); break;
         case 9: Brain.Screen.printAt(20, 90, "Matchloader Left Long + Mid"); break;
+        case 10: Brain.Screen.printAt(20, 90, "Matchloader Right Long + Low"); break;
       }
     
       Brain.Screen.printAt(5, 120, "Color:");
